@@ -61,7 +61,7 @@ export default function ProductDetail({bookId}){
     </section>
 
     <section className="reviewsSection" id="reviews">
-      <div className="reviewsHeader"><div><span className="eyebrow">READER REVIEWS</span><h2>Ratings & comments</h2></div><div className="ratingSummary"><strong>{reviewData.averageRating||'—'}</strong><div><Stars value={reviewData.averageRating}/><span>{reviewData.reviewCount} verified submission{reviewData.reviewCount===1?'':'s'}</span></div></div></div>
+      <div className="reviewsHeader"><div><span className="eyebrow">READER REVIEWS</span><h2>Ratings & comments</h2></div><div className="ratingSummary"><strong>{reviewData.averageRating||'—'}</strong><div><Stars value={reviewData.averageRating}/><span>{reviewData.reviewCount} reader review{reviewData.reviewCount===1?'':'s'}</span></div></div></div>
       <div className="reviewGrid">
         <form className="reviewForm" onSubmit={submitReview}>
           <h3>Share your opinion</h3>
