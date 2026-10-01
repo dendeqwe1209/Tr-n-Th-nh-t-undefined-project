@@ -2,7 +2,9 @@ package com.cnjava.book_store.Order;
 
 import java.math.BigDecimal;
 import java.util.*;
+import com.cnjava.book_store.Auth.*;
 import com.cnjava.book_store.Book.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -12,25 +14,27 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
   private final OrderRepository orders;
   private final BookRepository books;
-  public OrderController(OrderRepository orders,BookRepository books){this.orders=orders;this.books=books;}
+  private final AuthService auth;
+
+  public OrderController(OrderRepository orders,BookRepository books,AuthService auth){
+    this.orders=orders;this.books=books;this.auth=auth;
+  }
 
   public record CheckoutItem(Long bookId,Integer quantity){}
-  public record CheckoutRequest(String customerName,String email,String phone,String shippingAddress,String paymentMethod,List<CheckoutItem> items){}
+  public record CheckoutRequest(String phone,String shippingAddress,List<CheckoutItem> items){}
 
   @PostMapping
   @Transactional
-  public ResponseEntity<?> checkout(@RequestBody CheckoutRequest request){
-    if(request.customerName()==null||request.customerName().isBlank()||
-       request.email()==null||request.email().isBlank()||
-       request.phone()==null||request.phone().isBlank()||
-       request.shippingAddress()==null||request.shippingAddress().isBlank())
-      return ResponseEntity.badRequest().body(Map.of("message","Please complete all shipping fields."));
+  public ResponseEntity<?> checkout(@RequestBody CheckoutRequest request,HttpServletRequest http){
+    UserAccount user=auth.currentUser(http).orElse(null);
+    if(user==null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message","Please sign in before checkout."));
+    if(request.phone()==null||request.phone().isBlank()||request.shippingAddress()==null||request.shippingAddress().isBlank())
+      return ResponseEntity.badRequest().body(Map.of("message","Please complete phone and shipping address."));
     if(request.items()==null||request.items().isEmpty())
       return ResponseEntity.badRequest().body(Map.of("message","Cart is empty."));
 
     List<Book> resolvedBooks=new ArrayList<>();
     List<Integer> quantities=new ArrayList<>();
-    BigDecimal total=BigDecimal.ZERO;
 
     for(CheckoutItem item:request.items()){
       if(item.bookId()==null||item.quantity()==null||item.quantity()<1)
@@ -40,33 +44,33 @@ public class OrderController {
       Book book=maybe.get();
       if(book.getStock()<item.quantity())
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message","Not enough stock for "+book.getTitle()+". Available: "+book.getStock()));
-      BigDecimal price=book.getPrice()==null?BigDecimal.ZERO:book.getPrice();
-      total=total.add(price.multiply(BigDecimal.valueOf(item.quantity())));
       resolvedBooks.add(book);
       quantities.add(item.quantity());
     }
 
     CustomerOrder order=new CustomerOrder();
-    order.setCustomerName(request.customerName().trim());
-    order.setEmail(request.email().trim());
+    order.setUserId(user.getId());
+    order.setCustomerName(user.getFullName());
+    order.setEmail(user.getEmail());
     order.setPhone(request.phone().trim());
     order.setShippingAddress(request.shippingAddress().trim());
-    order.setPaymentMethod(request.paymentMethod()==null||request.paymentMethod().isBlank()?"COD":request.paymentMethod().trim().toUpperCase());
-    order.setStatus("PLACED");
-    order.setTotalAmount(total);
+    order.setPaymentMethod("FREE_PAYMENT");
+    order.setStatus("PAID");
+    order.setTotalAmount(BigDecimal.ZERO);
 
     for(int i=0;i<resolvedBooks.size();i++){
       Book book=resolvedBooks.get(i);
       int qty=quantities.get(i);
-      BigDecimal price=book.getPrice()==null?BigDecimal.ZERO:book.getPrice();
+      book.setPrice(BigDecimal.ZERO);
       book.setStock(book.getStock()-qty);
       books.save(book);
+
       OrderItem orderItem=new OrderItem();
       orderItem.setBookId(book.getId());
       orderItem.setTitle(book.getTitle());
-      orderItem.setUnitPrice(price);
+      orderItem.setUnitPrice(BigDecimal.ZERO);
       orderItem.setQuantity(qty);
-      orderItem.setSubtotal(price.multiply(BigDecimal.valueOf(qty)));
+      orderItem.setSubtotal(BigDecimal.ZERO);
       order.addItem(orderItem);
     }
 
@@ -75,7 +79,13 @@ public class OrderController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<CustomerOrder> get(@PathVariable long id){
-    return orders.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+  public ResponseEntity<?> get(@PathVariable long id,HttpServletRequest http){
+    UserAccount user=auth.currentUser(http).orElse(null);
+    if(user==null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message","Please sign in."));
+    CustomerOrder order=orders.findById(id).orElse(null);
+    if(order==null) return ResponseEntity.notFound().build();
+    if(order.getUserId()==null || order.getUserId()!=user.getId())
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message","You cannot access this order."));
+    return ResponseEntity.ok(order);
   }
 }

@@ -29,7 +29,7 @@ public class PublicBookController {
     m.put("bookCover",b.getBook_cover());
     m.put("stock",b.getStock());
     m.put("description",b.getDescription());
-    m.put("price",b.getPrice()==null?BigDecimal.ZERO:b.getPrice());
+    m.put("price",BigDecimal.ZERO);
     return m;
   }
 }
