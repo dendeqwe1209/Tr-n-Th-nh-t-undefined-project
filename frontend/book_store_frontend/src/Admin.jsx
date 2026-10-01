@@ -1,4 +1,5 @@
 import React,{useEffect,useMemo,useState}from'react';
+import Brand from './Brand';
 
 const emptyBook={title:'',author:'',category:'',stock:10,bookCover:'',description:'',previewText:'',featured:false};
 const emptyStaff={fullName:'',email:'',phone:''};
@@ -66,7 +67,7 @@ export default function Admin(){
 
   return <main className="adminShell">
     <aside className="adminSidebar">
-      <a className="adminBrand" href="/">BOOKSTORE</a>
+      <Brand className="adminBrand"/>
       <p>Admin workspace</p>
       <nav>{tabs.map(t=><button key={t} className={tab===t?'active':''} onClick={()=>setTab(t)}>{label(t)}{t==='books'&&<span>{overview.books||0}</span>}{t==='orders'&&<span>{overview.orders||0}</span>}</button>)}</nav>
       <a className="backStore" href="/">← View storefront</a>

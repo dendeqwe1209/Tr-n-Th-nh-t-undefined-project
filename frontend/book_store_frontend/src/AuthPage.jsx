@@ -1,4 +1,5 @@
 import React,{useState}from'react';
+import Brand from './Brand';
 
 const safeNext=()=>{
   const next=new URLSearchParams(window.location.search).get('next')||'/';
@@ -27,7 +28,7 @@ export default function AuthPage({mode}){
   const altHref=`/${alternate}?next=${encodeURIComponent(next)}`;
 
   return <main className="authPage">
-    <a className="authBrand" href="/">BOOKSTORE</a>
+    <Brand className="authBrand"/>
     <section className="authCard">
       <span className="eyebrow">{isRegister?'CREATE ACCOUNT':'WELCOME BACK'}</span>
       <h1>{isRegister?'Join Bookstore':'Sign in'}</h1>

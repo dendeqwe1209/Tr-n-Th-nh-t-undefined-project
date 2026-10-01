@@ -1,4 +1,5 @@
 import React,{useEffect,useState}from'react';
+import Brand from './Brand';
 
 const readCart=()=>{try{return JSON.parse(localStorage.getItem('book-store-cart')||'[]')}catch{return[]}};
 const money=v=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(Number(v||0));
@@ -22,14 +23,14 @@ export default function Checkout(){
   if(user===undefined)return <div className="pageState">Checking account...</div>;
 
   if(!user)return <main className="checkoutPage">
-    <header className="checkoutNav"><a className="brand" href="/">BOOKSTORE</a><span>Account required</span></header>
+    <header className="checkoutNav"><Brand/><span>Account required</span></header>
     <div className="checkoutAuthGate"><span className="eyebrow">CHECKOUT LOCKED</span><h1>Sign in before payment</h1><p>You can browse and build a cart as a guest, but an account is required to place an order.</p><div><a className="primaryLink" href="/login?next=%2Fcheckout">Sign in</a><a className="secondaryLink" href="/register?next=%2Fcheckout">Create account</a></div></div>
   </main>;
 
   if(order)return <main className="checkoutPage"><div className="orderSuccess"><div className="successIcon">✓</div><span className="eyebrow">PAYMENT COMPLETE</span><h1>Thank you, {order.customerName}.</h1><p>Order <strong>#{order.id}</strong> has been paid and stored successfully.</p><div className="successMeta"><span>Status <strong>{order.status}</strong></span><span>Total <strong>{money(0)}</strong></span><span>Payment <strong>{order.paymentMethod}</strong></span></div><p className="muted">Because the catalog price is 0đ, no external payment gateway or charge is required.</p><a className="primaryLink" href="/">Continue shopping</a></div></main>;
 
   return <main className="checkoutPage">
-    <header className="checkoutNav"><a className="brand" href="/">BOOKSTORE</a><span>Signed in as {user.email}</span></header>
+    <header className="checkoutNav"><Brand/><span>Signed in as {user.email}</span></header>
     <div className="checkoutLayout">
       <section className="checkoutFormCard"><span className="eyebrow">FREE CHECKOUT</span><h1>Shipping details</h1>
         {cart.length===0?<div className="emptyState"><p>Your cart is empty.</p><a href="/">Return to catalog</a></div>:<form onSubmit={placeOrder}>

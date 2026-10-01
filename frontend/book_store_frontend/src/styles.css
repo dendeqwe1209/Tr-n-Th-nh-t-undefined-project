@@ -90,3 +90,31 @@
   .featureActions{flex-wrap:wrap}
   .slideArrow.prev{left:4px}.slideArrow.next{right:4px}
 }
+
+/* Shared bookstore brand */
+.bookstoreBrand{display:inline-flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap}
+.bookstoreIcon{width:24px;height:24px;flex:0 0 24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sliderBrand{font-weight:900;letter-spacing:.09em;color:#fff}
+.authBrand,.adminBrand,.brand{display:inline-flex;align-items:center;gap:9px}
+.authBrand .bookstoreIcon,.adminBrand .bookstoreIcon{width:23px;height:23px}
+
+/* Keep featured banner titles inside their layout */
+.featureCopy{min-width:0}
+.featureCopy h1{
+  width:100%;
+  max-width:680px;
+  min-height:92px;
+  max-height:160px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+@media(max-width:850px){
+  .featureCopy h1{max-width:100%;min-height:58px;max-height:116px}
+}
+@media(max-width:600px){
+  .featureCopy h1{font-size:42px;line-height:1.02;min-height:44px;max-height:88px}
+  .bookstoreBrand{gap:7px}
+  .bookstoreIcon{width:21px;height:21px;flex-basis:21px}
+}

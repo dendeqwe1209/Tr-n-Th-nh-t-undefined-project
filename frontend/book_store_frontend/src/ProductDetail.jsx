@@ -1,4 +1,5 @@
 import React,{useEffect,useMemo,useState}from'react';
+import Brand from './Brand';
 
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}};
 const money=v=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(Number(v||0));
@@ -45,7 +46,7 @@ export default function ProductDetail({bookId}){
   if(!book)return <div className="pageState"><h2>Book not found</h2><a href="/">← Back to store</a></div>;
 
   return <main className="detailPage">
-    <header className="detailNav"><a className="brand" href="/">BOOKSTORE</a><div><button className="linkButton" onClick={toggleWishlist}>{saved?'♥ Saved':'♡ Wishlist'}</button>{user?<span className="detailUser">{user.fullName}</span>:<a className="cartLink" href={`/login?next=${encodeURIComponent('/books/'+bookId)}`}>Login</a>}<a className="cartLink" href={user?'/checkout':'/login?next=%2Fcheckout'}>Cart ({cartCount})</a></div></header>
+    <header className="detailNav"><Brand/><div><button className="linkButton" onClick={toggleWishlist}>{saved?'♥ Saved':'♡ Wishlist'}</button>{user?<span className="detailUser">{user.fullName}</span>:<a className="cartLink" href={`/login?next=${encodeURIComponent('/books/'+bookId)}`}>Login</a>}<a className="cartLink" href={user?'/checkout':'/login?next=%2Fcheckout'}>Cart ({cartCount})</a></div></header>
 
     <section className="productHero">
       <div className="productCover">{book.bookCover?<img src={book.bookCover} alt={book.title}/>:<div className="placeholder">BOOK</div>}</div>
