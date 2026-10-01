@@ -13,7 +13,7 @@ export default function Admin(){
   const[bookForm,setBookForm]=useState(emptyBook),[editingBook,setEditingBook]=useState(null),[bookSearch,setBookSearch]=useState('');
   const[categoryName,setCategoryName]=useState(''),[editingCategory,setEditingCategory]=useState(null);
   const[staffForm,setStaffForm]=useState(emptyStaff),[editingStaff,setEditingStaff]=useState(null);
-  const[msg,setMsg]=useState('');
+  const[msg,setMsg]=useState(''),[adminMenuOpen,setAdminMenuOpen]=useState(false);
 
   const json=async(url,options)=>{const r=await fetch(url,options);const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(body.message||'Request failed');return body};
   const loadOverview=()=>json('/api/admin/overview').then(setOverview).catch(()=>{});
@@ -66,6 +66,15 @@ export default function Admin(){
   const filteredBooks=useMemo(()=>{const q=bookSearch.trim().toLowerCase();return !q?books:books.filter(b=>`${b.title} ${b.author} ${b.category}`.toLowerCase().includes(q))},[books,bookSearch]);
 
   return <main className="adminShell">
+    <header className="adminMobileBar"><Brand className="adminBrand"/><button className="mobileMenuButton" aria-label="Open admin menu" onClick={()=>setAdminMenuOpen(true)}><span></span><span></span><span></span></button></header>
+    {adminMenuOpen&&<div className="mobileMenuOverlay" onMouseDown={e=>e.target===e.currentTarget&&setAdminMenuOpen(false)}>
+      <aside className="mobileMenuPanel adminMobileMenu">
+        <div className="mobileMenuHead"><Brand/><button className="mobileMenuClose" onClick={()=>setAdminMenuOpen(false)}>×</button></div>
+        <small className="mobileMenuLabel">ADMIN</small>
+        {tabs.map(t=><button key={t} className={tab===t?'active':''} onClick={()=>{setTab(t);setAdminMenuOpen(false)}}>{label(t)}{t==='books'&&<span>{overview.books||0}</span>}{t==='orders'&&<span>{overview.orders||0}</span>}</button>)}
+        <a href="/">← View storefront</a>
+      </aside>
+    </div>}
     <aside className="adminSidebar">
       <Brand className="adminBrand"/>
       <p>Admin workspace</p>

@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState}from'react';
+import React,{useEffect,useMemo,useRef,useState}from'react';
 import Brand from './Brand';
 
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}};
@@ -25,7 +25,8 @@ export default function Store(){
   const[q,setQ]=useState(''),[loading,setLoading]=useState(true),[user,setUser]=useState(null);
   const[cartOpen,setCartOpen]=useState(false),[cart,setCart]=useState(()=>read('book-store-cart',[]));
   const[wishlist,setWishlist]=useState(()=>read('book-store-wishlist',[])),[wishlistOnly,setWishlistOnly]=useState(false),[notice,setNotice]=useState('');
-  const[page,setPage]=useState(1),[slide,setSlide]=useState(0);
+  const[page,setPage]=useState(1),[slide,setSlide]=useState(0),[mobileMenuOpen,setMobileMenuOpen]=useState(false);
+  const categoryRef=useRef(null);
 
   useEffect(()=>{
     fetch('/api/books').then(r=>r.json()).then(setBooks).catch(()=>setBooks([])).finally(()=>setLoading(false));
@@ -76,15 +77,26 @@ export default function Store(){
   const changeQty=(id,delta)=>setCart(c=>c.map(i=>i.id===id?{...i,qty:Math.max(0,Math.min(i.qty+delta,i.stock||99))}:i).filter(i=>i.qty>0));
   const logout=async()=>{await fetch('/api/auth/logout',{method:'POST'});setUser(null)};
   const goPage=n=>{setPage(n);setTimeout(()=>document.querySelector('.catalog')?.scrollIntoView({behavior:'smooth',block:'start'}),0)};
+  const scrollCategories=direction=>categoryRef.current?.scrollBy({left:direction*320,behavior:'smooth'});
 
   return <main>
     <header className="sliderHero">
-      <nav><Brand className="sliderBrand"/><div className="navActions">
+      <nav className="storeNav"><Brand className="sliderBrand"/><div className="navActions desktopNavActions">
         <button className={'navPill '+(wishlistOnly?'active':'')} onClick={()=>setWishlistOnly(v=>!v)}>♡ Wishlist <span>{wishlist.length}</span></button>
         <a href="/admin">Admin</a>
         {user?<><span className="userPill">Hi, {user.fullName}</span><button className="navPill" onClick={logout}>Logout</button></>:<><a href="/login">Login</a><a href="/register">Register</a></>}
         <button className="cartButton" onClick={()=>setCartOpen(true)}>Cart <span>{cartCount}</span></button>
-      </div></nav>
+      </div><button className="mobileMenuButton" aria-label="Open menu" aria-expanded={mobileMenuOpen} onClick={()=>setMobileMenuOpen(true)}><span></span><span></span><span></span></button></nav>
+      {mobileMenuOpen&&<div className="mobileMenuOverlay" onMouseDown={e=>e.target===e.currentTarget&&setMobileMenuOpen(false)}>
+        <aside className="mobileMenuPanel">
+          <div className="mobileMenuHead"><Brand/><button className="mobileMenuClose" onClick={()=>setMobileMenuOpen(false)}>×</button></div>
+          {user&&<div className="mobileUserBlock"><small>Signed in as</small><strong>{user.fullName}</strong></div>}
+          <button onClick={()=>{setWishlistOnly(v=>!v);setMobileMenuOpen(false)}}>♡ Wishlist <span>{wishlist.length}</span></button>
+          <button onClick={()=>{setCartOpen(true);setMobileMenuOpen(false)}}>Cart <span>{cartCount}</span></button>
+          <a href="/admin">Admin</a>
+          {user?<button onClick={async()=>{await logout();setMobileMenuOpen(false)}}>Logout</button>:<><a href="/login">Login</a><a href="/register">Register</a></>}
+        </aside>
+      </div>}
 
       <div className="featureSlider">
         <div className="featureCopy">
@@ -105,7 +117,9 @@ export default function Store(){
     </header>
 
     <section className="categoryBar">
-      <div className="categoryInner"><button className={selectedCategory==='All'?'active':''} onClick={()=>setSelectedCategory('All')}>All <span>{books.length}</span></button>{categories.map(c=><button key={c.id} className={selectedCategory===c.name?'active':''} onClick={()=>setSelectedCategory(c.name)}>{c.name} <span>{c.bookCount}</span></button>)}</div>
+      <button className="categoryScrollButton categoryPrev" aria-label="Previous categories" onClick={()=>scrollCategories(-1)}>‹</button>
+      <div className="categoryInner" ref={categoryRef}><button className={selectedCategory==='All'?'active':''} onClick={()=>setSelectedCategory('All')}>All <span>{books.length}</span></button>{categories.map(c=><button key={c.id} className={selectedCategory===c.name?'active':''} onClick={()=>setSelectedCategory(c.name)}>{c.name} <span>{c.bookCount}</span></button>)}</div>
+      <button className="categoryScrollButton categoryNext" aria-label="Next categories" onClick={()=>scrollCategories(1)}>›</button>
     </section>
 
     <section className="catalog">

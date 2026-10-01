@@ -8,7 +8,7 @@ const Stars=({value=0})=><span className="stars" aria-label={`${value} out of 5 
 export default function ProductDetail({bookId}){
   const[book,setBook]=useState(null),[reviewData,setReviewData]=useState({averageRating:0,reviewCount:0,reviews:[]}),[loading,setLoading]=useState(true),[user,setUser]=useState(null);
   const[qty,setQty]=useState(1),[wishlist,setWishlist]=useState(()=>read('book-store-wishlist',[])),[cart,setCart]=useState(()=>read('book-store-cart',[]));
-  const[form,setForm]=useState({rating:5,comment:''}),[submitting,setSubmitting]=useState(false),[message,setMessage]=useState(''),[sampleOpen,setSampleOpen]=useState(false);
+  const[form,setForm]=useState({rating:5,comment:''}),[submitting,setSubmitting]=useState(false),[message,setMessage]=useState(''),[sampleOpen,setSampleOpen]=useState(false),[mobileMenuOpen,setMobileMenuOpen]=useState(false);
 
   const loadReviews=()=>fetch(`/api/books/${bookId}/reviews`).then(r=>r.json()).then(setReviewData);
   useEffect(()=>{
@@ -46,7 +46,17 @@ export default function ProductDetail({bookId}){
   if(!book)return <div className="pageState"><h2>Book not found</h2><a href="/">← Back to store</a></div>;
 
   return <main className="detailPage">
-    <header className="detailNav"><Brand/><div><button className="linkButton" onClick={toggleWishlist}>{saved?'♥ Saved':'♡ Wishlist'}</button>{user?<span className="detailUser">{user.fullName}</span>:<a className="cartLink" href={`/login?next=${encodeURIComponent('/books/'+bookId)}`}>Login</a>}<a className="cartLink" href={user?'/checkout':'/login?next=%2Fcheckout'}>Cart ({cartCount})</a></div></header>
+    <header className="detailNav"><Brand/><div className="detailDesktopActions"><button className="linkButton" onClick={toggleWishlist}>{saved?'♥ Saved':'♡ Wishlist'}</button>{user?<span className="detailUser">{user.fullName}</span>:<a className="cartLink" href={`/login?next=${encodeURIComponent('/books/'+bookId)}`}>Login</a>}<a className="cartLink" href={user?'/checkout':'/login?next=%2Fcheckout'}>Cart ({cartCount})</a></div><button className="mobileMenuButton" aria-label="Open menu" aria-expanded={mobileMenuOpen} onClick={()=>setMobileMenuOpen(true)}><span></span><span></span><span></span></button></header>
+    {mobileMenuOpen&&<div className="mobileMenuOverlay" onMouseDown={e=>e.target===e.currentTarget&&setMobileMenuOpen(false)}>
+      <aside className="mobileMenuPanel">
+        <div className="mobileMenuHead"><Brand/><button className="mobileMenuClose" onClick={()=>setMobileMenuOpen(false)}>×</button></div>
+        {user&&<div className="mobileUserBlock"><small>Signed in as</small><strong>{user.fullName}</strong></div>}
+        <button onClick={()=>{toggleWishlist();setMobileMenuOpen(false)}}>{saved?'♥ Saved':'♡ Wishlist'}</button>
+        <a href={user?'/checkout':'/login?next=%2Fcheckout'}>Cart ({cartCount})</a>
+        <a href="/">Store</a>
+        {user?<a href="/">Account home</a>:<><a href={'/login?next='+encodeURIComponent('/books/'+bookId)}>Login</a><a href={'/register?next='+encodeURIComponent('/books/'+bookId)}>Register</a></>}
+      </aside>
+    </div>}
 
     <section className="productHero">
       <div className="productCover">{book.bookCover?<img src={book.bookCover} alt={book.title}/>:<div className="placeholder">BOOK</div>}</div>

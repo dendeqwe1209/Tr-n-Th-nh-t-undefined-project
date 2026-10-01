@@ -5,7 +5,7 @@ const readCart=()=>{try{return JSON.parse(localStorage.getItem('book-store-cart'
 const money=v=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(Number(v||0));
 
 export default function Checkout(){
-  const[cart,setCart]=useState(readCart),[user,setUser]=useState(undefined),[form,setForm]=useState({phone:'',shippingAddress:''}),[busy,setBusy]=useState(false),[error,setError]=useState(''),[order,setOrder]=useState(null);
+  const[cart,setCart]=useState(readCart),[user,setUser]=useState(undefined),[form,setForm]=useState({phone:'',shippingAddress:''}),[busy,setBusy]=useState(false),[error,setError]=useState(''),[order,setOrder]=useState(null),[mobileMenuOpen,setMobileMenuOpen]=useState(false);
 
   useEffect(()=>{fetch('/api/auth/me').then(r=>r.ok?r.json():null).then(setUser).catch(()=>setUser(null))},[]);
   const change=e=>setForm({...form,[e.target.name]:e.target.value});
@@ -23,14 +23,16 @@ export default function Checkout(){
   if(user===undefined)return <div className="pageState">Checking account...</div>;
 
   if(!user)return <main className="checkoutPage">
-    <header className="checkoutNav"><Brand/><span>Account required</span></header>
+    <header className="checkoutNav"><Brand/><span className="checkoutDesktopStatus">Account required</span><button className="mobileMenuButton" aria-label="Open menu" onClick={()=>setMobileMenuOpen(true)}><span></span><span></span><span></span></button></header>
+    {mobileMenuOpen&&<div className="mobileMenuOverlay" onMouseDown={e=>e.target===e.currentTarget&&setMobileMenuOpen(false)}><aside className="mobileMenuPanel"><div className="mobileMenuHead"><Brand/><button className="mobileMenuClose" onClick={()=>setMobileMenuOpen(false)}>×</button></div><a href="/">Store</a><a href="/login?next=%2Fcheckout">Login</a><a href="/register?next=%2Fcheckout">Register</a></aside></div>}
     <div className="checkoutAuthGate"><span className="eyebrow">CHECKOUT LOCKED</span><h1>Sign in before payment</h1><p>You can browse and build a cart as a guest, but an account is required to place an order.</p><div><a className="primaryLink" href="/login?next=%2Fcheckout">Sign in</a><a className="secondaryLink" href="/register?next=%2Fcheckout">Create account</a></div></div>
   </main>;
 
   if(order)return <main className="checkoutPage"><div className="orderSuccess"><div className="successIcon">✓</div><span className="eyebrow">PAYMENT COMPLETE</span><h1>Thank you, {order.customerName}.</h1><p>Order <strong>#{order.id}</strong> has been paid and stored successfully.</p><div className="successMeta"><span>Status <strong>{order.status}</strong></span><span>Total <strong>{money(0)}</strong></span><span>Payment <strong>{order.paymentMethod}</strong></span></div><p className="muted">Because the catalog price is 0đ, no external payment gateway or charge is required.</p><a className="primaryLink" href="/">Continue shopping</a></div></main>;
 
   return <main className="checkoutPage">
-    <header className="checkoutNav"><Brand/><span>Signed in as {user.email}</span></header>
+    <header className="checkoutNav"><Brand/><span className="checkoutDesktopStatus">Signed in as {user.email}</span><button className="mobileMenuButton" aria-label="Open menu" onClick={()=>setMobileMenuOpen(true)}><span></span><span></span><span></span></button></header>
+    {mobileMenuOpen&&<div className="mobileMenuOverlay" onMouseDown={e=>e.target===e.currentTarget&&setMobileMenuOpen(false)}><aside className="mobileMenuPanel"><div className="mobileMenuHead"><Brand/><button className="mobileMenuClose" onClick={()=>setMobileMenuOpen(false)}>×</button></div><div className="mobileUserBlock"><small>Signed in as</small><strong>{user.fullName}</strong><span>{user.email}</span></div><a href="/">Store</a><button onClick={()=>setMobileMenuOpen(false)}>Checkout</button></aside></div>}
     <div className="checkoutLayout">
       <section className="checkoutFormCard"><span className="eyebrow">FREE CHECKOUT</span><h1>Shipping details</h1>
         {cart.length===0?<div className="emptyState"><p>Your cart is empty.</p><a href="/">Return to catalog</a></div>:<form onSubmit={placeOrder}>
