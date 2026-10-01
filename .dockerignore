@@ -1,0 +1,7 @@
+.git
+**/node_modules
+**/build
+**/target
+**/.idea
+**/.vscode
+*.zip
