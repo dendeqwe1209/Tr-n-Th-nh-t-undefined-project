@@ -170,3 +170,196 @@
     max-height:54px;
   }
 }
+
+/* HARD LOCK featured banner geometry: every slide is identical in size */
+@media(min-width:851px){
+  .sliderHero{
+    height:620px;
+    min-height:620px;
+    max-height:620px;
+    overflow:hidden;
+  }
+
+  .featureSlider{
+    height:430px;
+    min-height:430px;
+    max-height:430px;
+    align-items:stretch;
+  }
+
+  .featureCopy{
+    height:430px;
+    min-height:430px;
+    max-height:430px;
+    display:grid;
+    grid-template-rows:
+      18px   /* eyebrow */
+      164px  /* title: always exactly two lines */
+      28px   /* author */
+      58px   /* description */
+      56px   /* buttons */
+      58px;  /* search */
+    row-gap:10px;
+    align-content:start;
+    overflow:hidden;
+  }
+
+  .featureCopy>.eyebrow{
+    height:18px;
+    line-height:18px;
+    overflow:hidden;
+  }
+
+  .featureCopy h1{
+    box-sizing:border-box;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    line-clamp:2;
+    height:164px!important;
+    min-height:164px!important;
+    max-height:164px!important;
+    margin:0!important;
+    padding:0;
+    font-size:76px;
+    line-height:82px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .featureAuthor{
+    box-sizing:border-box;
+    height:28px!important;
+    min-height:28px!important;
+    max-height:28px!important;
+    line-height:28px;
+    margin:0!important;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+  }
+
+  .featureDescription{
+    box-sizing:border-box;
+    height:58px!important;
+    min-height:58px!important;
+    max-height:58px!important;
+    margin:0!important;
+    line-height:29px;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    line-clamp:2;
+    overflow:hidden;
+  }
+
+  .featureActions{
+    box-sizing:border-box;
+    height:56px;
+    min-height:56px;
+    max-height:56px;
+    margin:0!important;
+    display:flex;
+    align-items:center;
+  }
+
+  .featureActions button{
+    height:44px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .heroSearch{
+    box-sizing:border-box;
+    height:58px;
+    min-height:58px;
+    max-height:58px;
+    margin:0!important;
+    display:flex;
+    align-items:center;
+  }
+
+  .heroSearch input{
+    height:52px;
+    margin:0!important;
+  }
+
+  .featureVisual{
+    height:430px;
+    min-height:430px;
+    max-height:430px;
+  }
+
+  .featureVisual img{
+    height:410px;
+    min-height:410px;
+    max-height:410px;
+  }
+
+  .slideDots{
+    height:20px;
+    min-height:20px;
+    max-height:20px;
+    margin-top:16px;
+  }
+}
+
+/* Tablet/mobile also uses a fixed two-line title slot */
+@media(max-width:850px){
+  .featureCopy{
+    display:grid;
+    grid-template-rows:18px 98px 26px 54px auto 58px;
+    row-gap:9px;
+  }
+
+  .featureCopy h1{
+    height:98px!important;
+    min-height:98px!important;
+    max-height:98px!important;
+    margin:0!important;
+    font-size:48px;
+    line-height:49px;
+  }
+
+  .featureAuthor{
+    height:26px!important;
+    min-height:26px!important;
+    max-height:26px!important;
+    line-height:26px;
+    margin:0!important;
+  }
+
+  .featureDescription{
+    height:54px!important;
+    min-height:54px!important;
+    max-height:54px!important;
+    margin:0!important;
+    line-height:27px;
+  }
+
+  .featureActions,.heroSearch{
+    margin:0!important;
+  }
+}
+
+@media(max-width:600px){
+  .featureCopy{
+    grid-template-rows:18px 86px 24px 54px auto 56px;
+  }
+
+  .featureCopy h1{
+    height:86px!important;
+    min-height:86px!important;
+    max-height:86px!important;
+    font-size:42px;
+    line-height:43px;
+  }
+
+  .featureAuthor{
+    height:24px!important;
+    min-height:24px!important;
+    max-height:24px!important;
+    line-height:24px;
+  }
+}
