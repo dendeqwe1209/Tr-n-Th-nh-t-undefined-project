@@ -185,7 +185,7 @@ public class AdminController {
     book.setTitle(r.title().trim());
     book.setAuthor(author);
     book.setCategory(category);
-    book.setBook_cover(r.bookCover()==null||r.bookCover().isBlank()?placeholder(r.title()):r.bookCover().trim());
+    book.setBook_cover(r.bookCover()==null||r.bookCover().isBlank()?categoryCover(category.getName()):r.bookCover().trim());
     book.setStock(r.stock());
     book.setDescription(r.description()==null?"":r.description().trim());
     book.setPrice(BigDecimal.ZERO);
@@ -200,7 +200,19 @@ public class AdminController {
     return m;
   }
 
-  private String placeholder(String title){
-    return "https://placehold.co/320x460?text="+title.trim().replace(" ","+");
+  private String categoryCover(String category){
+    return switch(category){
+      case "Classics" -> "/images/categories/classics.svg";
+      case "Fiction" -> "/images/categories/fiction.svg";
+      case "Fantasy" -> "/images/categories/fantasy.svg";
+      case "Science Fiction" -> "/images/categories/science-fiction.svg";
+      case "Mystery & Thriller" -> "/images/categories/mystery-thriller.svg";
+      case "Romance" -> "/images/categories/romance.svg";
+      case "History & Biography" -> "/images/categories/history-biography.svg";
+      case "Self-Help & Business" -> "/images/categories/self-help-business.svg";
+      case "Technology" -> "/images/categories/technology.svg";
+      case "Philosophy" -> "/images/categories/philosophy.svg";
+      default -> "/images/categories/fiction.svg";
+    };
   }
 }

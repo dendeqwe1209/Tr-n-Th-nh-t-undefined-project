@@ -108,11 +108,13 @@ public class DemoDataInitializer implements CommandLineRunner {
       if(existing.isEmpty()){
         book.setStock(6+(index%15));
         book.setDescription(description(seed));
-        book.setBook_cover(cover(seed.title()));
       }else{
         if(book.getDescription()==null||book.getDescription().isBlank()) book.setDescription(description(seed));
-        if(book.getBook_cover()==null||book.getBook_cover().isBlank()) book.setBook_cover(cover(seed.title()));
       }
+
+      // Category artwork is the default visual identity for the demo catalog.
+      // This also migrates existing seed books away from external/placeholder covers.
+      book.setBook_cover(categoryCover(seed.category()));
 
       books.save(book);
       index++;
@@ -137,8 +139,19 @@ public class DemoDataInitializer implements CommandLineRunner {
     };
   }
 
-  private String cover(String title){
-    return "https://placehold.co/320x460?text="+title
-      .replace(" ","+").replace(",","").replace("'","");
+  private String categoryCover(String category){
+    return switch(category){
+      case "Classics" -> "/images/categories/classics.svg";
+      case "Fiction" -> "/images/categories/fiction.svg";
+      case "Fantasy" -> "/images/categories/fantasy.svg";
+      case "Science Fiction" -> "/images/categories/science-fiction.svg";
+      case "Mystery & Thriller" -> "/images/categories/mystery-thriller.svg";
+      case "Romance" -> "/images/categories/romance.svg";
+      case "History & Biography" -> "/images/categories/history-biography.svg";
+      case "Self-Help & Business" -> "/images/categories/self-help-business.svg";
+      case "Technology" -> "/images/categories/technology.svg";
+      case "Philosophy" -> "/images/categories/philosophy.svg";
+      default -> "/images/categories/fiction.svg";
+    };
   }
 }
