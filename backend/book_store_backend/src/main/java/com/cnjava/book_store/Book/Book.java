@@ -16,6 +16,7 @@ public class Book {
  private String book_cover;
  private int stock;
  @Column(length=2000) private String description;
+ @Column(length=5000) private String previewText;
  @Column(precision=14,scale=2) private BigDecimal price = BigDecimal.ZERO;
 
  public Book(){}
@@ -29,5 +30,6 @@ public class Book {
  public String getBook_cover(){return book_cover;} public void setBook_cover(String book_cover){this.book_cover=book_cover;}
  public int getStock(){return stock;} public void setStock(int stock){this.stock=stock;}
  public String getDescription(){return description;} public void setDescription(String description){this.description=description;}
+ public String getPreviewText(){return previewText;} public void setPreviewText(String previewText){this.previewText=previewText;}
  public BigDecimal getPrice(){return price;} public void setPrice(BigDecimal price){this.price=price;}
 }

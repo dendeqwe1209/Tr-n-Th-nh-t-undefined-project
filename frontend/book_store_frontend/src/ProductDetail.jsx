@@ -7,7 +7,7 @@ const Stars=({value=0})=><span className="stars" aria-label={`${value} out of 5 
 export default function ProductDetail({bookId}){
   const[book,setBook]=useState(null),[reviewData,setReviewData]=useState({averageRating:0,reviewCount:0,reviews:[]}),[loading,setLoading]=useState(true),[user,setUser]=useState(null);
   const[qty,setQty]=useState(1),[wishlist,setWishlist]=useState(()=>read('book-store-wishlist',[])),[cart,setCart]=useState(()=>read('book-store-cart',[]));
-  const[form,setForm]=useState({rating:5,comment:''}),[submitting,setSubmitting]=useState(false),[message,setMessage]=useState('');
+  const[form,setForm]=useState({rating:5,comment:''}),[submitting,setSubmitting]=useState(false),[message,setMessage]=useState(''),[sampleOpen,setSampleOpen]=useState(false);
 
   const loadReviews=()=>fetch(`/api/books/${bookId}/reviews`).then(r=>r.json()).then(setReviewData);
   useEffect(()=>{
@@ -57,6 +57,8 @@ export default function ProductDetail({bookId}){
         <div className="ratingLine"><Stars value={reviewData.averageRating}/><strong>{reviewData.averageRating||'New'}</strong><a href="#reviews">{reviewData.reviewCount} review{reviewData.reviewCount===1?'':'s'}</a></div>
         <div className="detailPrice">{money(0)}</div>
         <p className="productDescription">{book.description}</p>
+        <button className="readSampleButton" onClick={()=>setSampleOpen(v=>!v)}>{sampleOpen?'Hide sample':'Read sample'}</button>
+        {sampleOpen&&<div className="samplePanel"><span className="eyebrow">PREVIEW</span><h3>A short look inside</h3><p>{book.previewText||'Preview text is not available for this book yet.'}</p><small>Demo editorial preview — not a verbatim excerpt from the published book.</small></div>}
         <p className={"availability "+(book.stock>0?'in':'out')}>{book.stock>0?`In stock · ${book.stock} copies available`:'Out of stock'}</p>
 
         <div className="purchaseRow">

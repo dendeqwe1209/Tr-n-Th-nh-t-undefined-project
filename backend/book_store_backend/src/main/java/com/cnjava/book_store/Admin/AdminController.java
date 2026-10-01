@@ -32,7 +32,7 @@ public class AdminController {
     this.users=users;this.orders=orders;this.reviews=reviews;this.staff=staff;
   }
 
-  public record BookRequest(String title,String author,String category,String bookCover,Integer stock,String description){}
+  public record BookRequest(String title,String author,String category,String bookCover,Integer stock,String description,String previewText){}
   public record CategoryRequest(String name){}
   public record OrderStatusRequest(String status){}
 
@@ -188,6 +188,7 @@ public class AdminController {
     book.setBook_cover(r.bookCover()==null||r.bookCover().isBlank()?categoryCover(category.getName()):r.bookCover().trim());
     book.setStock(r.stock());
     book.setDescription(r.description()==null?"":r.description().trim());
+    book.setPreviewText(r.previewText()==null?"":r.previewText().trim());
     book.setPrice(BigDecimal.ZERO);
   }
 
@@ -196,7 +197,7 @@ public class AdminController {
     m.put("id",b.getId());m.put("title",b.getTitle());
     m.put("author",b.getAuthor()==null?"Unknown":b.getAuthor().getFullName());
     m.put("category",b.getCategory()==null?"Uncategorized":b.getCategory().getName());
-    m.put("bookCover",b.getBook_cover());m.put("stock",b.getStock());m.put("description",b.getDescription());m.put("price",BigDecimal.ZERO);
+    m.put("bookCover",b.getBook_cover());m.put("stock",b.getStock());m.put("description",b.getDescription());m.put("previewText",b.getPreviewText());m.put("price",BigDecimal.ZERO);
     return m;
   }
 

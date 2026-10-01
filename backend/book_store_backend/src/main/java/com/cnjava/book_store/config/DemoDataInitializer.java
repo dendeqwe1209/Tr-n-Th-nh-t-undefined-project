@@ -111,6 +111,7 @@ public class DemoDataInitializer implements CommandLineRunner {
       }else{
         if(book.getDescription()==null||book.getDescription().isBlank()) book.setDescription(description(seed));
       }
+      if(book.getPreviewText()==null||book.getPreviewText().isBlank()) book.setPreviewText(preview(seed));
 
       // Category artwork is the default visual identity for the demo catalog.
       // This also migrates existing seed books away from external/placeholder covers.
@@ -136,6 +137,22 @@ public class DemoDataInitializer implements CommandLineRunner {
       case "Technology" -> "A technology and software-engineering title for technical readers.";
       case "Philosophy" -> "A reflective philosophy title about values, meaning and how to live.";
       default -> "A curated title in the Bookstore demo catalog.";
+    };
+  }
+
+  private String preview(SeedBook b){
+    return switch(b.category()){
+      case "Classics" -> b.title()+" opens a window onto enduring human conflicts: ambition, dignity, social pressure and the choices people make when the world around them begins to change. This demo preview is written for the app and is not copied from the published book.";
+      case "Fiction" -> "In "+b.title()+", the reader is invited into a character-driven world where memory, relationships and difficult decisions gradually shape the story. This short preview is an original summary-style sample created for the demo.";
+      case "Fantasy" -> b.title()+" introduces a world larger than ordinary life, where unfamiliar places, loyalties and dangers pull the characters toward an adventure that tests what they believe. This is an app-written preview rather than text from the book.";
+      case "Science Fiction" -> b.title()+" begins from a speculative idea about technology, society or the future, then asks what that change might mean for ordinary people. The text shown here is an original preview written for this bookstore demo.";
+      case "Mystery & Thriller" -> "A question sits at the centre of "+b.title()+": something does not fit, and every new clue changes how the reader understands what happened. This spoiler-light sample is written by the app team and does not reproduce the novel.";
+      case "Romance" -> b.title()+" focuses on two people whose feelings are shaped by timing, vulnerability and the choices they make around one another. This is a short original preview for the demo storefront.";
+      case "History & Biography" -> b.title()+" follows real people, events and ideas to show how personal decisions connect with larger historical change. This preview is a concise editorial introduction created for the app.";
+      case "Self-Help & Business" -> b.title()+" presents practical ideas that readers can examine, test and apply to work or everyday life. This preview summarises the learning direction of the book without reproducing its copyrighted text.";
+      case "Technology" -> b.title()+" introduces technical ideas through principles, patterns and problem-solving habits that can be applied to software and engineering work. This is an original preview produced for the demo.";
+      case "Philosophy" -> b.title()+" invites the reader to consider judgment, values and how to respond to events that cannot always be controlled. This short preview is an original editorial sample for the app.";
+      default -> "A short editorial preview created for the Bookstore demo. It gives readers a sense of the book without reproducing the original text.";
     };
   }
 
