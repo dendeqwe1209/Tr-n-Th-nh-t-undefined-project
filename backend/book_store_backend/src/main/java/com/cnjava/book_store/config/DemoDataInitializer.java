@@ -113,9 +113,9 @@ public class DemoDataInitializer implements CommandLineRunner {
       }
       if(book.getPreviewText()==null||book.getPreviewText().isBlank()) book.setPreviewText(preview(seed));
 
-      // Category artwork is the default visual identity for the demo catalog.
-      // This also migrates existing seed books away from external/placeholder covers.
-      book.setBook_cover(categoryCover(seed.category()));
+      // Use a real cover matching the seeded book title. Category artwork remains the UI fallback.
+      book.setBook_cover(realCover(seed.title()));
+      book.setFeatured(isFeatured(seed.title()));
 
       books.save(book);
       index++;
@@ -154,6 +154,73 @@ public class DemoDataInitializer implements CommandLineRunner {
       case "Philosophy" -> b.title()+" invites the reader to consider judgment, values and how to respond to events that cannot always be controlled. This short preview is an original editorial sample for the app.";
       default -> "A short editorial preview created for the Bookstore demo. It gives readers a sense of the book without reproducing the original text.";
     };
+  }
+
+  private boolean isFeatured(String title){
+    return Set.of(
+      "1984",
+      "Norwegian Wood",
+      "Harry Potter and the Philosopher's Stone",
+      "Dune",
+      "Atomic Habits"
+    ).contains(title);
+  }
+
+  private String realCover(String title){
+    String isbn=switch(title){
+      case "1984" -> "9780451524935";
+      case "Animal Farm" -> "9780451526342";
+      case "The Great Gatsby" -> "9780743273565";
+      case "To Kill a Mockingbird" -> "9780061120084";
+      case "The Catcher in the Rye" -> "9780316769488";
+      case "Pride and Prejudice" -> "9780141439518";
+      case "Jane Eyre" -> "9780141441146";
+      case "Of Mice and Men" -> "9780140177398";
+      case "Norwegian Wood" -> "9780375704024";
+      case "Kafka on the Shore" -> "9781400079278";
+      case "The Alchemist" -> "9780061122415";
+      case "The Kite Runner" -> "9781594631931";
+      case "The Little Prince" -> "9780156012195";
+      case "Harry Potter and the Philosopher's Stone" -> "9780747532699";
+      case "The Hobbit" -> "9780547928227";
+      case "The Fellowship of the Ring" -> "9780547928210";
+      case "A Game of Thrones" -> "9780553593716";
+      case "The Name of the Wind" -> "9780756404741";
+      case "The Lion, the Witch and the Wardrobe" -> "9780064471046";
+      case "Dune" -> "9780441172719";
+      case "Foundation" -> "9780553293357";
+      case "Neuromancer" -> "9780441569595";
+      case "Ender's Game" -> "9780812550702";
+      case "Fahrenheit 451" -> "9781451673319";
+      case "The Martian" -> "9780553418026";
+      case "The Girl with the Dragon Tattoo" -> "9780307454546";
+      case "Gone Girl" -> "9780307588371";
+      case "The Da Vinci Code" -> "9780307474278";
+      case "Murder on the Orient Express" -> "9780062693662";
+      case "The Silent Patient" -> "9781250301697";
+      case "Me Before You" -> "9780143124542";
+      case "The Fault in Our Stars" -> "9780525478812";
+      case "Sapiens" -> "9780062316097";
+      case "Homo Deus" -> "9780062464316";
+      case "The Diary of a Young Girl" -> "9780553296983";
+      case "Steve Jobs" -> "9781451648539";
+      case "Long Walk to Freedom" -> "9780316548182";
+      case "Atomic Habits" -> "9780735211292";
+      case "The 7 Habits of Highly Effective People" -> "9781982137274";
+      case "Think and Grow Rich" -> "9781585424337";
+      case "Rich Dad Poor Dad" -> "9781612680194";
+      case "The Lean Startup" -> "9780307887894";
+      case "Zero to One" -> "9780804139298";
+      case "Start with Why" -> "9781591846444";
+      case "Deep Work" -> "9781455586691";
+      case "Clean Code" -> "9780132350884";
+      case "The Pragmatic Programmer" -> "9780135957059";
+      case "Design Patterns" -> "9780201633610";
+      case "Introduction to Algorithms" -> "9780262046305";
+      case "Meditations" -> "9780140449334";
+      default -> "";
+    };
+    return isbn.isBlank()?"/images/categories/fiction.svg":"https://covers.openlibrary.org/b/isbn/"+isbn+"-L.jpg";
   }
 
   private String categoryCover(String category){

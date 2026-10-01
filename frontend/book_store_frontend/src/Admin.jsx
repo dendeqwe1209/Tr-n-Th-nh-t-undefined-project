@@ -1,6 +1,6 @@
 import React,{useEffect,useMemo,useState}from'react';
 
-const emptyBook={title:'',author:'',category:'',stock:10,bookCover:'',description:'',previewText:''};
+const emptyBook={title:'',author:'',category:'',stock:10,bookCover:'',description:'',previewText:'',featured:false};
 const emptyStaff={fullName:'',email:'',phone:''};
 const tabs=['overview','books','categories','orders','users','reviews','staff'];
 const label=t=>t.charAt(0).toUpperCase()+t.slice(1);
@@ -26,7 +26,7 @@ export default function Admin(){
 
   useEffect(()=>{refresh()},[]);
   const flash=m=>{setMsg(m);setTimeout(()=>setMsg(''),2500)};
-  const bookChange=e=>setBookForm({...bookForm,[e.target.name]:e.target.value});
+  const bookChange=e=>setBookForm({...bookForm,[e.target.name]:e.target.type==='checkbox'?e.target.checked:e.target.value});
   const staffChange=e=>setStaffForm({...staffForm,[e.target.name]:e.target.value});
 
   const saveBook=async e=>{
@@ -37,7 +37,7 @@ export default function Admin(){
       setBookForm(emptyBook);setEditingBook(null);flash('Book saved');refresh();
     }catch(err){flash(err.message)}
   };
-  const editBook=b=>{setEditingBook(b.id);setBookForm({title:b.title,author:b.author,category:b.category,stock:b.stock,bookCover:b.bookCover||'',description:b.description||'',previewText:b.previewText||''});window.scrollTo({top:0,behavior:'smooth'})};
+  const editBook=b=>{setEditingBook(b.id);setBookForm({title:b.title,author:b.author,category:b.category,stock:b.stock,bookCover:b.bookCover||'',description:b.description||'',previewText:b.previewText||'',featured:!!b.featured});window.scrollTo({top:0,behavior:'smooth'})};
   const deleteBook=async id=>{if(!window.confirm('Delete this book?'))return;try{await fetch(`/api/admin/books/${id}`,{method:'DELETE'});flash('Book deleted');refresh()}catch{flash('Could not delete book')}};
 
   const saveCategory=async e=>{
@@ -93,14 +93,14 @@ export default function Admin(){
           <label>Category<select name="category" value={bookForm.category} onChange={bookChange} required><option value="">Select category</option>{categories.map(c=><option key={c.id} value={c.name}>{c.name}</option>)}</select></label>
           <label>Stock<input name="stock" type="number" min="0" value={bookForm.stock} onChange={bookChange} required/></label>
           <label>Cover URL<input name="bookCover" value={bookForm.bookCover} onChange={bookChange} placeholder="Optional"/></label>
-          <label>Description<textarea name="description" rows="4" value={bookForm.description} onChange={bookChange}/></label><label>Preview text<textarea name="previewText" rows="7" value={bookForm.previewText} onChange={bookChange} placeholder="Short spoiler-light sample shown when the reader clicks Read sample"/></label><small className="adminFieldHint">Use an original preview/summary rather than copying copyrighted book text.</small>
+          <label>Description<textarea name="description" rows="4" value={bookForm.description} onChange={bookChange}/></label><label>Preview text<textarea name="previewText" rows="7" value={bookForm.previewText} onChange={bookChange} placeholder="Short spoiler-light sample shown when the reader clicks Read sample"/></label><small className="adminFieldHint">Use an original preview/summary rather than copying copyrighted book text.</small><label className="featuredCheck"><input type="checkbox" name="featured" checked={bookForm.featured} onChange={bookChange}/><span>Show this book in the storefront slider</span></label>
           <div className="fixedPrice">Price <strong>0 ₫</strong></div>
           <button className="adminPrimary">{editingBook?'Update book':'Add book'}</button>
           {editingBook&&<button type="button" className="adminSecondary" onClick={()=>{setEditingBook(null);setBookForm(emptyBook)}}>Cancel</button>}
         </form>
         <section className="adminPanel">
           <div className="tableHeader"><div><h2>Catalog</h2><small>{books.length} books</small></div><input value={bookSearch} onChange={e=>setBookSearch(e.target.value)} placeholder="Search books..."/></div>
-          <div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Book</th><th>Category</th><th>Stock</th><th>Price</th><th></th></tr></thead><tbody>{filteredBooks.map(b=><tr key={b.id}><td><div className="bookCell">{b.bookCover&&<img src={b.bookCover} alt=""/>}<div><strong>{b.title}</strong><small>{b.author}</small></div></div></td><td>{b.category}</td><td>{b.stock}</td><td>0 ₫</td><td className="rowActions"><button onClick={()=>editBook(b)}>Edit</button><button className="dangerText" onClick={()=>deleteBook(b.id)}>Delete</button></td></tr>)}</tbody></table></div>
+          <div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Book</th><th>Category</th><th>Featured</th><th>Stock</th><th>Price</th><th></th></tr></thead><tbody>{filteredBooks.map(b=><tr key={b.id}><td><div className="bookCell">{b.bookCover&&<img src={b.bookCover} alt=""/>}<div><strong>{b.title}</strong><small>{b.author}</small></div></div></td><td>{b.category}</td><td>{b.featured?'Yes':'—'}</td><td>{b.stock}</td><td>0 ₫</td><td className="rowActions"><button onClick={()=>editBook(b)}>Edit</button><button className="dangerText" onClick={()=>deleteBook(b.id)}>Delete</button></td></tr>)}</tbody></table></div>
         </section>
       </div>}
 

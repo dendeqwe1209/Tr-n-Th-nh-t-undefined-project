@@ -30,6 +30,7 @@ public class PublicBookController {
     m.put("stock",b.getStock());
     m.put("description",b.getDescription());
     m.put("previewText",b.getPreviewText());
+    m.put("featured",b.isFeatured());
     m.put("price",BigDecimal.ZERO);
     return m;
   }
