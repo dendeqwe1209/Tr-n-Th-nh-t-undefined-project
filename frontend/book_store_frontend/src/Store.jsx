@@ -4,7 +4,6 @@ import Brand from './Brand';
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}};
 const money=v=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(Number(v||0));
 const PAGE_SIZE=25;
-const bannerTitle=title=>title&&title.length>32?title.slice(0,32).trimEnd()+'...':title;
 
 const fallbackCover=category=>{
   const key=(category||'').toLowerCase();
@@ -90,7 +89,7 @@ export default function Store(){
       <div className="featureSlider">
         <div className="featureCopy">
           <span className="eyebrow">FEATURED BOOK</span>
-          <h1 title={active?.title||''}>{bannerTitle(active?.title)||'Discover your next read'}</h1>
+          <h1 title={active?.title||''}>{active?.title||'Discover your next read'}</h1>
           <p className="featureAuthor">{active?('by '+active.author):'Curated books across multiple genres.'}</p>
           <p className="featureDescription">{active?.description||'Browse the collection and find a book that matches your interests.'}</p>
           {active&&<div className="featureActions"><button onClick={()=>window.location.href='/books/'+active.id}>View details</button><button className="featureGhost" onClick={()=>addToCart(active)} disabled={active.stock<=0}>Add to cart</button></div>}

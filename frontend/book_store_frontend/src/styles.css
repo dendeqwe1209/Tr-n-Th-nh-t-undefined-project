@@ -118,3 +118,55 @@
   .bookstoreBrand{gap:7px}
   .bookstoreIcon{width:21px;height:21px;flex-basis:21px}
 }
+
+/* Featured title uses one identical two-line slot on every slide */
+.featureCopy h1{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  width:100%;
+  max-width:680px;
+  height:1.92em;
+  min-height:1.92em;
+  max-height:1.92em;
+  margin:12px 0 14px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+/* Keep everything below the title anchored to the same vertical positions */
+.featureAuthor{height:24px;min-height:24px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.featureDescription{
+  height:56px;
+  min-height:56px;
+  max-height:56px;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden;
+}
+
+@media(max-width:850px){
+  .featureCopy h1{
+    height:1.92em;
+    min-height:1.92em;
+    max-height:1.92em;
+  }
+}
+@media(max-width:600px){
+  .featureCopy h1{
+    height:2.04em;
+    min-height:2.04em;
+    max-height:2.04em;
+  }
+  .featureDescription{
+    height:54px;
+    min-height:54px;
+    max-height:54px;
+  }
+}
