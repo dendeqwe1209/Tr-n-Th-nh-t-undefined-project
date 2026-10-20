@@ -1,6 +1,5 @@
 package com.cnjava.book_store.Book;
 
-import java.math.BigDecimal;
 import java.util.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ public class PublicBookController {
     m.put("description",b.getDescription());
     m.put("previewText",b.getPreviewText());
     m.put("featured",b.isFeatured());
-    m.put("price",BigDecimal.ZERO);
+    m.put("price",b.getPrice());
     return m;
   }
 }

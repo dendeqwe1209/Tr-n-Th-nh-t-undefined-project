@@ -8,9 +8,11 @@ import com.cnjava.book_store.Category.*;
 import com.cnjava.book_store.Staff.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(10)
 public class DemoDataInitializer implements CommandLineRunner {
   private final BookRepository books;
   private final AuthorRepository authors;
@@ -103,7 +105,9 @@ public class DemoDataInitializer implements CommandLineRunner {
       book.setTitle(seed.title());
       book.setAuthor(author);
       book.setCategory(category);
-      book.setPrice(BigDecimal.ZERO);
+      if(existing.isEmpty() || book.getPrice()==null || book.getPrice().signum()<=0){
+        book.setPrice(seedPrice(seed.category(),index));
+      }
 
       if(existing.isEmpty()){
         book.setStock(6+(index%15));
@@ -122,6 +126,23 @@ public class DemoDataInitializer implements CommandLineRunner {
     }
 
     if(staff.count()==0) staff.save(new Staff("Demo Admin","admin@bookstore.demo","0900000000"));
+  }
+
+  private BigDecimal seedPrice(String category,int index){
+    long base=switch(category){
+      case "Classics" -> 99000L;
+      case "Fiction" -> 119000L;
+      case "Fantasy" -> 149000L;
+      case "Science Fiction" -> 159000L;
+      case "Mystery & Thriller" -> 139000L;
+      case "Romance" -> 119000L;
+      case "History & Biography" -> 169000L;
+      case "Self-Help & Business" -> 149000L;
+      case "Technology" -> 189000L;
+      case "Philosophy" -> 129000L;
+      default -> 119000L;
+    };
+    return BigDecimal.valueOf(base+(index%4)*10000L);
   }
 
   private String description(SeedBook b){

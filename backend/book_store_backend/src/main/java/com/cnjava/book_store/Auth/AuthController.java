@@ -2,6 +2,7 @@ package com.cnjava.book_store.Auth;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import com.cnjava.book_store.Promotion.PromotionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +12,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   private final UserAccountRepository users;
   private final AuthService auth;
+  private final PromotionService promotions;
 
-  public AuthController(UserAccountRepository users,AuthService auth){this.users=users;this.auth=auth;}
+  public AuthController(UserAccountRepository users,AuthService auth,PromotionService promotions){
+    this.users=users;this.auth=auth;this.promotions=promotions;
+  }
 
   public record RegisterRequest(String fullName,String email,String password){}
   public record LoginRequest(String email,String password){}
@@ -32,18 +36,20 @@ public class AuthController {
     user.setFullName(name);
     user.setEmail(email);
     user.setPasswordHash(PasswordUtil.hash(password));
+    user.setRole(UserRole.USER);
     user=users.save(user);
+    promotions.issueWelcomeVoucher(user);
     auth.login(http,user);
     return ResponseEntity.status(HttpStatus.CREATED).body(publicUser(user));
   }
 
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequest request,HttpServletRequest http){
-    String email=request.email()==null?"":request.email().trim().toLowerCase();
+    String identifier=request.email()==null?"":request.email().trim();
     String password=request.password()==null?"":request.password();
-    UserAccount user=users.findByEmailIgnoreCase(email).orElse(null);
+    UserAccount user=users.findByEmailIgnoreCase(identifier).orElseGet(()->users.findByUsernameIgnoreCase(identifier).orElse(null));
     if(user==null || !PasswordUtil.matches(password,user.getPasswordHash()))
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message","Invalid email or password."));
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message","Invalid email/username or password."));
     auth.login(http,user);
     return ResponseEntity.ok(publicUser(user));
   }
@@ -67,6 +73,8 @@ public class AuthController {
     body.put("id",user.getId());
     body.put("fullName",user.getFullName());
     body.put("email",user.getEmail());
+    body.put("username",user.getUsername());
+    body.put("role",user.getRole().name());
     return body;
   }
 }

@@ -16,8 +16,8 @@ public class FreePricingInitializer implements CommandLineRunner {
   @Override
   public void run(String... args){
     for(Book book:books.findAll()){
-      if(book.getPrice()==null || book.getPrice().signum()!=0){
-        book.setPrice(BigDecimal.ZERO);
+      if(book.getPrice()==null || book.getPrice().signum()<=0){
+        book.setPrice(new BigDecimal("119000"));
         books.save(book);
       }
     }

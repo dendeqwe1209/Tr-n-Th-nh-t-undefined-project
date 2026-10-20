@@ -16,8 +16,12 @@ public class CustomerOrder {
   @Column(nullable=false,length=40) private String phone;
   @Column(nullable=false,length=500) private String shippingAddress;
   @Column(nullable=false,length=40) private String paymentMethod;
+  @Column(length=100) private String paymentReference;
   @Column(nullable=false,length=40) private String status;
-  @Column(nullable=false,precision=14,scale=2) private BigDecimal totalAmount;
+  @Column(nullable=false,precision=14,scale=2) private BigDecimal subtotalAmount=BigDecimal.ZERO;
+  @Column(nullable=false,precision=14,scale=2) private BigDecimal discountAmount=BigDecimal.ZERO;
+  @Column(nullable=false,precision=14,scale=2) private BigDecimal totalAmount=BigDecimal.ZERO;
+  @Column(length=80) private String promotionCode;
   @Column(nullable=false) private LocalDateTime createdAt;
   @OneToMany(mappedBy="order",cascade=CascadeType.ALL,orphanRemoval=true,fetch=FetchType.EAGER)
   private List<OrderItem> items=new ArrayList<>();
@@ -25,14 +29,18 @@ public class CustomerOrder {
   @PrePersist public void onCreate(){if(createdAt==null)createdAt=LocalDateTime.now();if(status==null)status="PAID";}
   public void addItem(OrderItem item){items.add(item);item.setOrder(this);}
   public long getId(){return id;} public void setId(long id){this.id=id;}
-  public Long getUserId(){return userId;} public void setUserId(Long userId){this.userId=userId;}
+  public Long getUserId(){return userId;} public void setUserId(Long v){userId=v;}
   public String getCustomerName(){return customerName;} public void setCustomerName(String v){customerName=v;}
   public String getEmail(){return email;} public void setEmail(String v){email=v;}
   public String getPhone(){return phone;} public void setPhone(String v){phone=v;}
   public String getShippingAddress(){return shippingAddress;} public void setShippingAddress(String v){shippingAddress=v;}
   public String getPaymentMethod(){return paymentMethod;} public void setPaymentMethod(String v){paymentMethod=v;}
+  public String getPaymentReference(){return paymentReference;} public void setPaymentReference(String v){paymentReference=v;}
   public String getStatus(){return status;} public void setStatus(String v){status=v;}
+  public BigDecimal getSubtotalAmount(){return subtotalAmount;} public void setSubtotalAmount(BigDecimal v){subtotalAmount=v;}
+  public BigDecimal getDiscountAmount(){return discountAmount;} public void setDiscountAmount(BigDecimal v){discountAmount=v;}
   public BigDecimal getTotalAmount(){return totalAmount;} public void setTotalAmount(BigDecimal v){totalAmount=v;}
+  public String getPromotionCode(){return promotionCode;} public void setPromotionCode(String v){promotionCode=v;}
   public LocalDateTime getCreatedAt(){return createdAt;} public void setCreatedAt(LocalDateTime v){createdAt=v;}
   public List<OrderItem> getItems(){return items;} public void setItems(List<OrderItem> v){items=v;}
 }

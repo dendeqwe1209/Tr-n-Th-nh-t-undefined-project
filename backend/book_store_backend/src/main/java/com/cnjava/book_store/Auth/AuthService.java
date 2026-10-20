@@ -20,6 +20,10 @@ public class AuthService {
     return users.findById(((Number)value).longValue());
   }
 
+  public boolean isAdmin(HttpServletRequest request){
+    return currentUser(request).map(u->u.getRole()==UserRole.ADMIN).orElse(false);
+  }
+
   public void login(HttpServletRequest request,UserAccount user){
     HttpSession old=request.getSession(false);
     if(old!=null) old.invalidate();
