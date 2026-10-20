@@ -437,3 +437,25 @@
   .productInfo h1{font-size:36px}
   .statGrid{grid-template-columns:1fr}
 }
+
+/* Paid catalog + checkout */
+.promotionBox{margin-top:26px;border-top:1px solid #eee9e0;padding-top:18px}.promotionBox h3,.paymentBox h3{font-family:Georgia,serif;font-size:25px;margin:0 0 14px}
+.voucherList{display:grid;gap:8px;margin-bottom:12px}.voucherList button{text-align:left;border:1px solid #ddd5c8;background:#fbfaf7;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:3px}.voucherList button.selected{border-color:#326247;background:#eaf4ed}.voucherList button span{font-family:monospace;font-weight:800}.voucherList button small{color:#6b7280}
+.promotionInput{display:grid;grid-template-columns:1fr auto;gap:8px}.promotionInput input{width:100%;padding:12px;border:1px solid #d8d2c7;border-radius:8px}.promotionInput button{border:0;border-radius:8px;background:#17202a;color:#fff;padding:0 16px;font-weight:800}.promoApplied{margin-top:9px;color:#326247;font-weight:800;font-size:13px}
+.demoPayCard{display:flex;align-items:center;gap:12px;border:1px solid #dcd5c9;border-radius:10px;padding:14px;background:#fbfaf7;margin-bottom:12px}.demoPayLogo{width:48px;height:48px;border-radius:12px;background:#17202a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}.demoPayCard>div:last-child{display:flex;flex-direction:column;gap:3px}.demoPayCard small{color:#6b7280}.sandboxHints{display:flex;flex-direction:column;gap:4px;background:#f3efe7;padding:10px 12px;border-radius:8px;font-size:11px;color:#6d665e}.discountLine strong{color:#326247}
+
+/* Admin auth, roles, promotions */
+.adminAccessDenied{min-height:100vh;background:#17202a;color:#fff;padding:34px 7vw;display:flex;flex-direction:column;gap:80px}.adminAccessDenied>div{max-width:620px;margin:auto}.adminAccessDenied h1{font-family:Georgia,serif;font-size:60px;line-height:1;margin:10px 0 18px}.adminAccessDenied p{color:#c8d0cc;line-height:1.7}.adminIdentity{display:flex;flex-direction:column;gap:3px;padding:11px 12px;background:#ffffff0d;border-radius:8px;margin-bottom:14px}.adminIdentity small{color:#9eaaa4}.adminLogout{margin-top:10px;border:1px solid #ffffff33;background:transparent;color:#fff;border-radius:8px;padding:10px;text-align:left}.adminLead{color:#717873;line-height:1.6}.promotionAdmin{display:grid;gap:20px}.promotionForms{display:grid;grid-template-columns:1fr 1fr;gap:20px}.promoFieldGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tableAction{border:1px solid #d2cbc0;background:#fff;border-radius:7px;padding:7px 9px;font-weight:800}
+
+/* Customer support chatbot */
+.chatLauncher{position:fixed;right:24px;bottom:24px;width:58px;height:58px;border:0;border-radius:50%;background:#17202a;color:#fff;font-size:24px;z-index:80;box-shadow:0 15px 35px #0004}
+.supportChat{position:fixed;right:24px;bottom:94px;width:min(370px,calc(100vw - 28px));height:520px;background:#f8f5ee;border-radius:16px;box-shadow:0 25px 70px #0005;z-index:79;display:flex;flex-direction:column;overflow:hidden;border:1px solid #ded7ca}.supportChat header{background:#17202a;color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between}.supportChat header>div{display:flex;flex-direction:column}.supportChat header small{color:#bfc8c3}.supportChat header button{border:0;background:transparent;color:#fff;font-size:25px}.chatMessages{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:9px}.chatBubble{max-width:86%;padding:10px 12px;border-radius:12px;line-height:1.45;font-size:13px}.chatBubble.bot{align-self:flex-start;background:#fff}.chatBubble.user{align-self:flex-end;background:#17202a;color:#fff}.quickReplies{padding:0 12px 10px;display:flex;gap:6px;overflow:auto}.quickReplies button{white-space:nowrap;border:1px solid #d8d0c3;background:#fff;border-radius:99px;padding:7px 9px;font-size:11px}.supportChat form{display:grid;grid-template-columns:1fr auto;gap:7px;padding:12px;border-top:1px solid #ddd6ca;background:#fff}.supportChat form input{border:1px solid #d8d0c3;border-radius:9px;padding:11px}.supportChat form button{border:0;border-radius:9px;background:#17202a;color:#fff;padding:0 13px;font-weight:800}
+
+@media(max-width:900px){.promotionForms{grid-template-columns:1fr}}
+@media(max-width:620px){
+  .promotionInput{grid-template-columns:1fr}.promotionInput button{height:42px}
+  .promoFieldGrid{grid-template-columns:1fr}
+  .supportChat{right:14px;bottom:84px;height:min(520px,70vh)}
+  .chatLauncher{right:16px;bottom:16px}
+  .adminAccessDenied{padding:24px}.adminAccessDenied h1{font-size:44px}
+}

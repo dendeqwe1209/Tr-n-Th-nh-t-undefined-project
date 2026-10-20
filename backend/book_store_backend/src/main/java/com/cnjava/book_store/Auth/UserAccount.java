@@ -25,7 +25,7 @@ public class UserAccount {
   private String passwordHash;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable=false,length=20)
+  @Column(length=20)
   private UserRole role=UserRole.USER;
 
   @Column(nullable=false)
@@ -36,6 +36,7 @@ public class UserAccount {
     if(createdAt==null) createdAt=LocalDateTime.now();
     if(email!=null) email=email.trim().toLowerCase();
     if(username!=null && username.isBlank()) username=null;
+    if(role==null) role=UserRole.USER;
   }
 
   public long getId(){return id;} public void setId(long id){this.id=id;}
@@ -43,6 +44,6 @@ public class UserAccount {
   public String getEmail(){return email;} public void setEmail(String v){email=v;}
   public String getUsername(){return username;} public void setUsername(String v){username=v;}
   public String getPasswordHash(){return passwordHash;} public void setPasswordHash(String v){passwordHash=v;}
-  public UserRole getRole(){return role;} public void setRole(UserRole v){role=v==null?UserRole.USER:v;}
+  public UserRole getRole(){return role==null?UserRole.USER:role;} public void setRole(UserRole v){role=v==null?UserRole.USER:v;}
   public LocalDateTime getCreatedAt(){return createdAt;} public void setCreatedAt(LocalDateTime v){createdAt=v;}
 }

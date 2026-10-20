@@ -32,10 +32,10 @@ export default function AuthPage({mode}){
     <section className="authCard">
       <span className="eyebrow">{isRegister?'CREATE ACCOUNT':'WELCOME BACK'}</span>
       <h1>{isRegister?'Join Bookstore':'Sign in'}</h1>
-      <p>{isRegister?'Create an account to review books and complete orders.':'Sign in to review books and complete checkout.'}</p>
+      <p>{isRegister?'Create an account to review books and complete orders.':'Sign in with your email or username to review books and complete checkout.'}</p>
       <form onSubmit={submit}>
         {isRegister&&<label>Full name<input name="fullName" value={form.fullName} onChange={change} minLength="2" required autoComplete="name"/></label>}
-        <label>Email<input name="email" type="email" value={form.email} onChange={change} required autoComplete="email"/></label>
+        <label>{isRegister?'Email':'Email or username'}<input name="email" type={isRegister?'email':'text'} value={form.email} onChange={change} required autoComplete={isRegister?'email':'username'}/></label>
         <label>Password<input name="password" type="password" value={form.password} onChange={change} minLength="8" required autoComplete={isRegister?'new-password':'current-password'}/></label>
         {isRegister&&<small className="authHint">Use at least 8 characters.</small>}
         {error&&<div className="authError">{error}</div>}

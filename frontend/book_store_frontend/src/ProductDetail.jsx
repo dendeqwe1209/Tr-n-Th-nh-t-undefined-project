@@ -27,7 +27,7 @@ export default function ProductDetail({bookId}){
   const addToCart=(goCheckout=false)=>{
     if(!book)return;
     if(goCheckout&&!user){requireLogin(`/books/${bookId}`);return;}
-    setCart(c=>{const found=c.find(i=>i.id===book.id);return found?c.map(i=>i.id===book.id?{...i,price:0,qty:Math.min(i.qty+qty,book.stock||99)}:i):[...c,{...book,price:0,qty:Math.min(qty,book.stock||99)}]});
+    setCart(c=>{const found=c.find(i=>i.id===book.id);return found?c.map(i=>i.id===book.id?{...i,price:Number(book.price||0),qty:Math.min(i.qty+qty,book.stock||99)}:i):[...c,{...book,price:Number(book.price||0),qty:Math.min(qty,book.stock||99)}]});
     setMessage(`${book.title} added to cart`);
     if(goCheckout)setTimeout(()=>window.location.href='/checkout',100);
   };
@@ -66,7 +66,7 @@ export default function ProductDetail({bookId}){
         <h1>{book.title}</h1>
         <p className="productAuthor">by {book.author}</p>
         <div className="ratingLine"><Stars value={reviewData.averageRating}/><strong>{reviewData.averageRating||'New'}</strong><a href="#reviews">{reviewData.reviewCount} review{reviewData.reviewCount===1?'':'s'}</a></div>
-        <div className="detailPrice">{money(0)}</div>
+        <div className="detailPrice">{money(book.price)}</div>
         <p className="productDescription">{book.description}</p>
         <button className="readSampleButton" onClick={()=>setSampleOpen(v=>!v)}>{sampleOpen?'Hide sample':'Read sample'}</button>
         {sampleOpen&&<div className="samplePanel"><span className="eyebrow">PREVIEW</span><h3>A short look inside</h3><p>{book.previewText||'Preview text is not available for this book yet.'}</p><small>Demo editorial preview — not a verbatim excerpt from the published book.</small></div>}
@@ -75,11 +75,11 @@ export default function ProductDetail({bookId}){
         <div className="purchaseRow">
           <div className="qtyPicker"><button onClick={()=>setQty(q=>Math.max(1,q-1))}>−</button><span>{qty}</span><button onClick={()=>setQty(q=>Math.min(book.stock||1,q+1))}>+</button></div>
           <button className="primaryAction" disabled={book.stock<=0} onClick={()=>addToCart(false)}>Add to cart</button>
-          <button className="buyNow" disabled={book.stock<=0} onClick={()=>addToCart(true)}>{user?'Buy now · 0đ':'Login to buy'}</button>
+          <button className="buyNow" disabled={book.stock<=0} onClick={()=>addToCart(true)}>{user?('Buy now · '+money(book.price)):'Login to buy'}</button>
         </div>
         <button className={"wishlistAction "+(saved?'saved':'')} onClick={toggleWishlist}>{saved?'♥ Remove from wishlist':'♡ Add to wishlist'}</button>
         {message&&<p className="inlineMessage">{message}</p>}
-        <div className="checkoutNote"><strong>Free checkout:</strong> every book is currently 0đ. Orders can only be completed by signed-in users; successful checkout is stored as a paid free order.</div>
+        <div className="checkoutNote"><strong>DemoPay Sandbox:</strong> checkout uses a simulated payment gateway, so no real charge is made. Voucher and discount calculations are validated by the backend.</div>
       </div>
     </section>
 

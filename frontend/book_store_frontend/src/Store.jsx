@@ -69,7 +69,7 @@ export default function Store(){
   const addToCart=book=>{
     setCart(c=>{
       const found=c.find(i=>i.id===book.id);
-      return found?c.map(i=>i.id===book.id?{...i,price:0,qty:Math.min(i.qty+1,book.stock||99)}:i):[...c,{...book,price:0,qty:1}]
+      return found?c.map(i=>i.id===book.id?{...i,price:Number(book.price||0),qty:Math.min(i.qty+1,book.stock||99)}:i):[...c,{...book,price:Number(book.price||0),qty:1}]
     });
     flash(book.title+' added to cart');
   };
@@ -83,7 +83,7 @@ export default function Store(){
     <header className="sliderHero">
       <nav className="storeNav"><Brand className="sliderBrand"/><div className="navActions desktopNavActions">
         <button className={'navPill '+(wishlistOnly?'active':'')} onClick={()=>setWishlistOnly(v=>!v)}>♡ Wishlist <span>{wishlist.length}</span></button>
-        <a href="/admin">Admin</a>
+        {user?.role==='ADMIN'&&<a href="/admin">Admin</a>}
         {user?<><span className="userPill">Hi, {user.fullName}</span><button className="navPill" onClick={logout}>Logout</button></>:<><a href="/login">Login</a><a href="/register">Register</a></>}
         <button className="cartButton" onClick={()=>setCartOpen(true)}>Cart <span>{cartCount}</span></button>
       </div><button className="mobileMenuButton" aria-label="Open menu" aria-expanded={mobileMenuOpen} onClick={()=>setMobileMenuOpen(true)}><span></span><span></span><span></span></button></nav>
@@ -127,13 +127,13 @@ export default function Store(){
       {loading?<p>Loading books...</p>:filtered.length===0?<div className="emptyState">No books found in this selection.</div>:<>
         <div className="grid">{visibleBooks.map(b=><article className="card interactive" key={b.id}>
           <div className="cardMedia"><button className="coverButton" onClick={()=>window.location.href='/books/'+b.id} aria-label={'View '+b.title}><div className="cover">{b.bookCover?<img src={b.bookCover} alt={b.title} onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=fallbackCover(b.category)}}/>:<div className="placeholder">BOOK</div>}</div></button><button className={'heart '+(wishlist.includes(b.id)?'saved':'')} onClick={()=>toggleWishlist(b)} aria-label="Toggle wishlist">{wishlist.includes(b.id)?'♥':'♡'}</button></div>
-          <div className="cardBody"><div className="cardMain"><span className="tag">{b.category}</span><h3 onClick={()=>window.location.href='/books/'+b.id}>{b.title}</h3><p className="author">{b.author}</p><p className="price">{money(0)}</p><p className="description">{b.description}</p></div><div className="cardFooter"><div className="stock">{b.stock>0?(b.stock+' in stock'):'Out of stock'}</div><div className="cardActions"><button className="ghost" onClick={()=>window.location.href='/books/'+b.id}>Details</button><button onClick={()=>addToCart(b)} disabled={b.stock<=0}>Add to cart</button></div></div></div>
+          <div className="cardBody"><div className="cardMain"><span className="tag">{b.category}</span><h3 onClick={()=>window.location.href='/books/'+b.id}>{b.title}</h3><p className="author">{b.author}</p><p className="price">{money(b.price)}</p><p className="description">{b.description}</p></div><div className="cardFooter"><div className="stock">{b.stock>0?(b.stock+' in stock'):'Out of stock'}</div><div className="cardActions"><button className="ghost" onClick={()=>window.location.href='/books/'+b.id}>Details</button><button onClick={()=>addToCart(b)} disabled={b.stock<=0}>Add to cart</button></div></div></div>
         </article>)}</div>
         {pageCount>1&&<nav className="pagination" aria-label="Book pages"><button disabled={currentPage===1} onClick={()=>goPage(currentPage-1)}>← Previous</button>{Array.from({length:pageCount},(_,i)=>i+1).map(n=><button key={n} className={n===currentPage?'active':''} onClick={()=>goPage(n)}>{n}</button>)}<button disabled={currentPage===pageCount} onClick={()=>goPage(currentPage+1)}>Next →</button></nav>}
       </>}
     </section>
 
-    {cartOpen&&<div className="overlay cartOverlay" onMouseDown={e=>e.target===e.currentTarget&&setCartOpen(false)}><aside className="cartPanel"><div className="cartHeader"><div><span className="eyebrow">YOUR CART</span><h2>{cartCount} item{cartCount===1?'':'s'}</h2></div><button className="close" onClick={()=>setCartOpen(false)}>×</button></div>{!cart.length?<div className="emptyCart">Your cart is empty.<br/><button onClick={()=>setCartOpen(false)}>Browse books</button></div>:<><div className="cartItems">{cart.map(i=><div className="cartItem" key={i.id}>{i.bookCover&&<img src={i.bookCover} alt="" onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=fallbackCover(i.category)}}/>}<div className="cartInfo"><strong>{i.title}</strong><small>{money(0)}</small><div className="qty"><button onClick={()=>changeQty(i.id,-1)}>−</button><span>{i.qty}</span><button onClick={()=>changeQty(i.id,1)} disabled={i.qty>=i.stock}>+</button></div></div><button className="remove" onClick={()=>setCart(c=>c.filter(x=>x.id!==i.id))}>Remove</button></div>)}</div><div className="cartBottom"><p>{user?'Ready to complete your free order.':'You must sign in before payment.'}</p><button className="checkout" onClick={()=>window.location.href=user?'/checkout':'/login?next=%2Fcheckout'}>{user?'Checkout 0đ':'Sign in to checkout'}</button></div></>}</aside></div>}
+    {cartOpen&&<div className="overlay cartOverlay" onMouseDown={e=>e.target===e.currentTarget&&setCartOpen(false)}><aside className="cartPanel"><div className="cartHeader"><div><span className="eyebrow">YOUR CART</span><h2>{cartCount} item{cartCount===1?'':'s'}</h2></div><button className="close" onClick={()=>setCartOpen(false)}>×</button></div>{!cart.length?<div className="emptyCart">Your cart is empty.<br/><button onClick={()=>setCartOpen(false)}>Browse books</button></div>:<><div className="cartItems">{cart.map(i=><div className="cartItem" key={i.id}>{i.bookCover&&<img src={i.bookCover} alt="" onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=fallbackCover(i.category)}}/>}<div className="cartInfo"><strong>{i.title}</strong><small>{money(i.price)}</small><div className="qty"><button onClick={()=>changeQty(i.id,-1)}>−</button><span>{i.qty}</span><button onClick={()=>changeQty(i.id,1)} disabled={i.qty>=i.stock}>+</button></div></div><button className="remove" onClick={()=>setCart(c=>c.filter(x=>x.id!==i.id))}>Remove</button></div>)}</div><div className="cartBottom"><p>{user?'Ready to complete your free order.':'You must sign in before payment.'}</p><button className="checkout" onClick={()=>window.location.href=user?'/checkout':'/login?next=%2Fcheckout'}>{user?'Checkout 0đ':'Sign in to checkout'}</button></div></>}</aside></div>}
     {notice&&<div className="toast">{notice}</div>}
   </main>
 }
