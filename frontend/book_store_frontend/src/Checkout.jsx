@@ -31,7 +31,7 @@ export default function Checkout(){
     }).catch(()=>setUser(null));
   },[]);
 
-  useEffect(()=>{if(user&&cart.length)loadQuote('')},[user]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(()=>{if(user&&cart.length)loadQuote('')},[user]);
 
   const applyPromotion=()=>loadQuote(promotionCode);
   const useVoucher=code=>{setPromotionCode(code);loadQuote(code)};
